@@ -29,14 +29,8 @@ async function transformTools(tools) {
     .map((tool) => {
       const definitionFunction = tool.definition?.function;
       if (!definitionFunction) return;
-      
-      let toolName = definitionFunction.name;
-      if (!toolName.startsWith(`${SERVER_NAME}.`)) {
-        toolName = `${SERVER_NAME}.${toolName}`;
-      }
-
       return {
-        name: toolName,
+        name: definitionFunction.name,
         description: definitionFunction.description,
         inputSchema: definitionFunction.parameters,
       };
