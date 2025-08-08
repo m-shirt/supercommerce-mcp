@@ -179,11 +179,11 @@ const apiTool = {
                     properties: {
                       customer_group_id: { type: 'integer' },
                       price: { type: 'string' },
-                      discount_price: { type: 'number' },
-                      discount_price_amount_type: { type: 'string' },
-                      discount_price_percentage: { type: 'string' },
-                      discount_start_date: { type: 'string', format: 'date-time' },
-                      discount_end_date: { type: 'string', format: 'date-time' },
+                      discount_price: { type: 'string'  , description: 'sales price after discount'},
+                      discount_price_amount_type: { type: 'string', description: '(fixed for Fixed Amount, percentage for Precentage of price' },
+                      discount_price_percentage: { type: 'string' , description: 'ex 10 for 10% dscount of the price and use it only with type percentage wotherwise leave it null'},
+                      discount_start_date: { type: 'string', description: 'date and time in this formate 2024-06-01 00:00' },
+                      discount_end_date: { type: 'string', format: 'date and time in this formate 2024-06-01 00:00' },
                     }
                   }
                 }
