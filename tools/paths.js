@@ -15,5 +15,7 @@ export const toolPaths = [
   'supercommerce-api/backend-ap-is/list-products-for-create-order.js',
   'supercommerce-api/backend-ap-is/get-promo-code-list.js',
   'supercommerce-api/backend-ap-is/list-orders.js',
-  'supercommerce-api/backend-ap-is/list-customers.js'
+  'supercommerce-api/backend-ap-is/list-customers.js',
+  'supercommerce-api/backend-ap-is/edit-promo-code.js',
+  'supercommerce-api/backend-ap-is/create-promo-code.js'
 ];
