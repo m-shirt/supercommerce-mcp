@@ -1,49 +1,134 @@
 /**
+ * Promo Code Types
+ * 
+ * 'Amount' => 1,
+ * 'Percent' => 2,
+ * 'Free Delivery' => 3,
+ * 'Exclusive' => 4,
+ */
+const PROMO_TYPES = {
+  Amount: 1,
+  Percent: 2,
+  FreeDelivery: 3,
+  Exclusive: 4
+};
+
+/**
+ * Work With Promotion options
+ * 
+ * 'yes' => 1,            // work with
+ * 'cant' => 2,           // doesn't work, raise error
+ * 'removePromotion' => 3,// remove promotion, override discount
+ * 'originalPrice' => 4   // remove promotion, override discount
+ */
+const WORK_WITH_PROMOTION = {
+  yes: 1,
+  cant: 2,
+  removePromotion: 3,
+  originalPrice: 4
+};
+
+/**
  * Function to create a promo code.
  *
- * @param {Object} args - Arguments for creating the promo code.
+ * @param {Object} args - The details of the promo code to create.
  * @param {string} args.name - The name of the promo code.
- * @param {string} args.description - The description of the promo code.
- * @param {number} args.type - The type of the promo code (1 for Amount, 2 for Percent, etc.).
- * @param {number} args.amount - The amount of the promo code.
+ * @param {string} args.description - A description of the promo code.
+ * @param {number} args.type - The type of promo code (1 for Amount, 2 for Percent, etc.).
+ * @param {number} args.amount - The amount for the promo code.
+ * @param {string} args.max_amount - The maximum amount for the promo code.
  * @param {string} args.expiration_date - The expiration date of the promo code.
  * @param {string} args.start_date - The start date of the promo code.
- * @param {number} [args.work_with_promotion=1] - Whether the promo works with promotions.
- * @param {number} [args.first_order=0] - Whether it is for the first order.
- * @param {number} [args.free_delivery=0] - Whether it includes free delivery.
+ * @param {string} args.random_count - Random count.
+ * @param {string} args.minimum_amount - Minimum amount.
+ * @param {null|number} args.uses_per_user - Uses per user.
+ * @param {string} args.usage_limit - Usage limit.
+ * @param {string} args.customer_phones - Customer phones.
+ * @param {string} args.target_type - Target type.
+ * @param {number} args.work_with_promotion - Indicates if the promo works with promotions.
+ * @param {number} args.first_order - Indicates if this is for first orders.
+ * @param {number} args.free_delivery - Indicates if the promo includes free delivery.
+ * @param {number} args.show_in_product - Show in product flag.
+ * @param {number} args.check_all_conditions - Check all conditions flag.
+ * @param {Array} args.conditions - Conditions array.
+ * @param {string} args.vendor_id - Vendor ID.
+ * @param {number} args.mobile_only - Mobile only flag.
+ * @param {string} args.payment_methods - Payment methods.
+ * @param {null|Array} args.customer_ids - Customer IDs.
  * @returns {Promise<Object>} - The result of the promo code creation.
  */
-const executeFunction = async ({ name, description = '', type, amount, expiration_date, start_date, work_with_promotion = 1, first_order = 0, free_delivery = 0 }) => {
-  const baseURL = ''; // will be provided by the user
+const executeFunction = async ({
+  name,
+  description,
+  type,
+  amount,
+  max_amount,
+  expiration_date,
+  start_date,
+  random_count,
+  minimum_amount,
+  uses_per_user,
+  usage_limit,
+  customer_phones,
+  target_type,
+  work_with_promotion,
+  first_order,
+  free_delivery,
+  show_in_product,
+  check_all_conditions,
+  conditions,
+  vendor_id,
+  mobile_only,
+  payment_methods,
+  customer_ids
+}) => {
+  const baseURL = ''; // Provide base URL here or via environment
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
 
-  const promoData = {
+  const url = `${baseURL}/api/admin/promos`;
+
+  const bodyObj = {
     name,
     description,
     type,
     amount,
+    max_amount,
     expiration_date,
     start_date,
+    random_count,
+    minimum_amount,
+    uses_per_user,
+    usage_limit,
+    customer_phones,
+    target_type,
     work_with_promotion,
     first_order,
     free_delivery,
-    // other fields can be added here as needed
+    show_in_product,
+    check_all_conditions,
+    conditions,
+    vendor_id,
+    mobile_only,
+    payment_methods,
+    customer_ids
   };
 
+  const body = JSON.stringify(bodyObj);
+
   try {
-    const response = await fetch(`${baseURL}/api/admin/promos`, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(promoData)
+      body
     });
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData);
+      throw new Error(JSON.stringify(errorData));
     }
 
     const data = await response.json();
@@ -56,7 +141,7 @@ const executeFunction = async ({ name, description = '', type, amount, expiratio
 
 /**
  * Tool configuration for creating a promo code.
- * @type {Object}
+ * All fields are required.
  */
 const apiTool = {
   function: executeFunction,
@@ -64,51 +149,87 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'create_promo_code',
-      description: 'Create a new promo code.',
+      description: `Create a new promo code.
+
+Types:
+1 => Amount
+2 => Percent
+3 => Free Delivery
+4 => Exclusive
+
+WORK_WITH_PROMOTION:
+1 => yes (work with)
+2 => cant (doesn't work, raise error)
+3 => removePromotion (remove promotion, override discount)
+4 => originalPrice (remove promotion, override discount)
+
+Flags are 0 or 1 for:
+first_order, free_delivery, show_in_product, check_all_conditions
+
+Must send all keys as in the request body.`,
       parameters: {
         type: 'object',
         properties: {
-          name: {
-            type: 'string',
-            description: 'The name of the promo code.'
-          },
-          description: {
-            type: 'string',
-            description: 'The description of the promo code.'
-          },
+          name: { type: 'string', description: 'The name of the promo code.' },
+          description: { type: 'string', description: 'A description of the promo code.' },
           type: {
             type: 'integer',
-            description: 'The type of the promo code (1 for Amount, 2 for Percent, etc.).'
+            enum: Object.values(PROMO_TYPES),
+            description: 'Promo code type (1-Amount, 2-Percent, 3-Free Delivery, 4-Exclusive).'
           },
-          amount: {
-            type: 'number',
-            description: 'The amount of the promo code.'
-          },
-          expiration_date: {
-            type: 'string',
-            description: 'The expiration date of the promo code.'
-          },
-          start_date: {
-            type: 'string',
-            description: 'The start date of the promo code.'
-          },
+          amount: { type: 'integer', description: 'The amount for the promo code.' },
+          max_amount: { type: 'string', description: 'Maximum amount for the promo code.' },
+          expiration_date: { type: 'string', description: 'Expiration date of the promo code.' },
+          start_date: { type: 'string', description: 'Start date of the promo code.' },
+          random_count: { type: 'string', description: 'Random count.' },
+          minimum_amount: { type: 'string', description: 'Minimum amount.' },
+          uses_per_user: { type: ['null', 'integer'], description: 'Uses per user.' },
+          usage_limit: { type: 'string', description: 'Usage limit.' },
+          customer_phones: { type: 'string', description: 'Customer phones.' },
+          target_type: { type: 'string', description: 'Target type.' },
           work_with_promotion: {
             type: 'integer',
-            description: 'Whether the promo works with promotions.'
+            enum: Object.values(WORK_WITH_PROMOTION),
+            description: 'Work with promotion flag.'
           },
-          first_order: {
-            type: 'integer',
-            description: 'Whether it is for the first order.'
-          },
-          free_delivery: {
-            type: 'integer',
-            description: 'Whether it includes free delivery.'
-          }
+          first_order: { type: 'integer', enum: [0, 1], description: 'First order flag.' },
+          free_delivery: { type: 'integer', enum: [0, 1], description: 'Free delivery flag.' },
+          show_in_product: { type: 'integer', enum: [0, 1], description: 'Show in product flag.' },
+          check_all_conditions: { type: 'integer', enum: [0, 1], description: 'Check all conditions flag.' },
+          conditions: { type: 'array', description: 'Conditions array.' },
+          vendor_id: { type: 'string', description: 'Vendor ID.' },
+          mobile_only: { type: 'integer', enum: [0, 1], description: 'Mobile only flag.' },
+          payment_methods: { type: 'string', description: 'Payment methods.' },
+          customer_ids: { type: ['null', 'array'], description: 'Customer IDs.' }
         },
-        required: ['name', 'type', 'amount', 'expiration_date', 'start_date']
+        required: [
+          'name',
+          'description',
+          'type',
+          'amount',
+          'max_amount',
+          'expiration_date',
+          'start_date',
+          'random_count',
+          'minimum_amount',
+          'uses_per_user',
+          'usage_limit',
+          'customer_phones',
+          'target_type',
+          'work_with_promotion',
+          'first_order',
+          'free_delivery',
+          'show_in_product',
+          'check_all_conditions',
+          'conditions',
+          'vendor_id',
+          'mobile_only',
+          'payment_methods',
+          'customer_ids'
+        ]
       }
     }
   }
 };
 
-export { apiTool };
+export { apiTool, PROMO_TYPES, WORK_WITH_PROMOTION };
