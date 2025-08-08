@@ -22,7 +22,7 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.resolve(__dirname, '.env') });
 
-const SERVER_NAME = 'generated-mcp-server';
+const SERVER_NAME = 'supercommerce';
 
 async function transformTools(tools) {
   return tools
@@ -30,7 +30,7 @@ async function transformTools(tools) {
       const definitionFunction = tool.definition?.function;
       if (!definitionFunction) return;
       return {
-        name: definitionFunction.name,
+        name: `${SERVER_NAME}.${definitionFunction.name}`,
         description: definitionFunction.description,
         inputSchema: definitionFunction.parameters,
       };

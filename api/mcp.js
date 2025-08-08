@@ -16,7 +16,9 @@ export default async function handler(req, res) {
   }
 
   const tools = await discoverTools();
-  const server = new Server({ name: "generated-mcp-server", version: "0.1.0" }, { capabilities: { tools: {} } });
+    console.log(JSON.stringify(tools, null, 2));
+
+  const server = new Server({ name: "supercommerce", version: "0.1.0" }, { capabilities: { tools: {} } });
   await setupServerHandlers(server, tools);
 
   const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
