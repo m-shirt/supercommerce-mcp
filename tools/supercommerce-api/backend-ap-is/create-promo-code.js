@@ -82,7 +82,7 @@ const executeFunction = async ({
   payment_methods,
   customer_ids
 }) => {
-  const baseURL = ''; // Provide base URL here or via environment
+ const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
 
   const url = `${baseURL}/api/admin/promos`;
