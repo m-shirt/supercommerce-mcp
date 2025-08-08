@@ -8,9 +8,10 @@
  * @param {string} [args.sub_category_id] - The sub-category ID to filter products.
  * @param {string} [args.inventory_id] - The inventory ID to filter products.
  * @param {string} [args.parent_id] - The parent ID to filter products.
+ * 
  * @returns {Promise<Object>} - The result of the product list retrieval.
  */
-const executeFunction = async ({ page, keyword_or_sku, category_id, sub_category_id, inventory_id, parent_id }) => {
+const executeFunction = async ({ page, keyword_or_sku, category_id, sub_category_id, inventory_id, parent_id  }) => {
  const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
   try {
@@ -22,8 +23,6 @@ const executeFunction = async ({ page, keyword_or_sku, category_id, sub_category
     if (sub_category_id) url.searchParams.append('sub_category_id', sub_category_id);
     if (inventory_id) url.searchParams.append('inventory_id', inventory_id);
     if (parent_id) url.searchParams.append('parent_id', parent_id);
-    url.searchParams.append('in_stock', 'true');
-    url.searchParams.append('active', 'true');
 
     // Set up headers for the request
     const headers = {
@@ -36,6 +35,7 @@ const executeFunction = async ({ page, keyword_or_sku, category_id, sub_category
       method: 'GET',
       headers
     });
+    console.log('url:', url.toString());
 
     // Check if the response was successful
     if (!response.ok) {
