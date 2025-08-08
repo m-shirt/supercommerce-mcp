@@ -87,7 +87,7 @@ const executeFunction = async ({
 
   const url = `${baseURL}/api/admin/promos`;
 
-  // Validate and normalize flags to integers 0 or 1
+  // Normalize flags to 0 or 1 integers
   const normalizeFlag = (flag) => (flag === 1 ? 1 : 0);
 
   const bodyObj = {
@@ -167,7 +167,7 @@ WORK_WITH_PROMOTION:
 4 => originalPrice (remove promotion, override discount)
 
 Flags are 0 or 1 for:
-first_order, free_delivery, show_in_product, check_all_conditions, mobile_only
+first_order, free_delivery, show_in_product, check_all_conditions
 
 Must send all keys as in the request body.`,
       parameters: {
@@ -186,7 +186,13 @@ Must send all keys as in the request body.`,
           start_date: { type: 'string', description: 'Start date of the promo code.' },
           random_count: { type: 'string', description: 'Random count.' },
           minimum_amount: { type: 'string', description: 'Minimum amount.' },
-          uses_per_user: { type: ['null', 'integer'], description: 'Uses per user.' },
+          uses_per_user: {
+            anyOf: [
+              { type: 'null' },
+              { type: 'integer' }
+            ],
+            description: 'Uses per user.'
+          },
           usage_limit: { type: 'string', description: 'Usage limit.' },
           customer_phones: { type: 'string', description: 'Customer phones.' },
           target_type: { type: 'string', description: 'Target type.' },
@@ -203,7 +209,16 @@ Must send all keys as in the request body.`,
           vendor_id: { type: 'string', description: 'Vendor ID.' },
           mobile_only: { type: 'integer', enum: [0, 1], description: 'Mobile only flag.' },
           payment_methods: { type: 'string', description: 'Payment methods.' },
-          customer_ids: { type: ['null', 'array'], description: 'Customer IDs.' }
+          customer_ids: {
+            anyOf: [
+              { type: 'null' },
+              {
+                type: 'array',
+                items: { type: 'string' }
+              }
+            ],
+            description: 'Customer IDs.'
+          }
         },
         required: [
           'name',
