@@ -151,7 +151,24 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'create_promo_code',
-      description: 'Create a new promo code',
+      description: `Create a new promo code.
+
+Types:
+1 => Amount
+2 => Percent
+3 => Free Delivery
+4 => Exclusive
+
+WORK_WITH_PROMOTION:
+1 => yes (work with)
+2 => cant (doesn't work, raise error)
+3 => removePromotion (remove promotion, override discount)
+4 => originalPrice (remove promotion, override discount)
+
+Flags are 0 or 1 for:
+first_order, free_delivery, show_in_product, check_all_conditions
+
+Must send all keys as in the request body.`,
       parameters: {
         type: 'object',
         properties: {
