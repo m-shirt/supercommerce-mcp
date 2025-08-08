@@ -2,9 +2,9 @@
  * Function to log in to the backend API.
  *
  * @param {Object} args - Arguments for the login.
- * @param {string} args.email - The email address for login.
- * @param {string} args.password - The password for login.
- * @returns {Promise<Object>} - The result of the login operation.
+ * @param {string} args.email - The email address of the user.
+ * @param {string} args.password - The password of the user.
+ * @returns {Promise<Object>} - The result of the login attempt.
  */
 const executeFunction = async ({ email, password }) => {
   const baseURL = 'https://storeapi.el-dokan.com'; // will be provided by the user
@@ -13,18 +13,13 @@ const executeFunction = async ({ email, password }) => {
     // Construct the URL for the login endpoint
     const url = `${baseURL}/api/admin/auth`;
 
-    // Set up the request body
-    const body = JSON.stringify({ email, password });
-
     // Set up headers for the request
     const headers = {
       'Content-Type': 'application/json',
     };
 
-    // If a token is provided, add it to the Authorization header
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    // Prepare the body of the request
+    const body = JSON.stringify({ email, password });
 
     // Perform the fetch request
     const response = await fetch(url, {
@@ -44,7 +39,7 @@ const executeFunction = async ({ email, password }) => {
     return data;
   } catch (error) {
     console.error('Error logging in:', error);
-    return { error: 'An error occurred during login.' };
+    return { error: 'An error occurred while logging in.' };
   }
 };
 
@@ -64,11 +59,11 @@ const apiTool = {
         properties: {
           email: {
             type: 'string',
-            description: 'The email address for login.'
+            description: 'The email address of the user.'
           },
           password: {
             type: 'string',
-            description: 'The password for login.'
+            description: 'The password of the user.'
           }
         },
         required: ['email', 'password']

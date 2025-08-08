@@ -44,6 +44,11 @@ async function setupServerHandlers(server, tools) {
   }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
+
+    console.error("\n=== Incoming Tool Call ===");
+    console.error("Tool Name:", request.params.name);
+    console.error("Arguments:", JSON.stringify(request.params.arguments, null, 2));
+
     const toolName = request.params.name;
     const tool = tools.find((t) => t.definition.function.name === toolName);
     if (!tool) {
@@ -62,6 +67,8 @@ async function setupServerHandlers(server, tools) {
     }
     try {
       const result = await tool.function(args);
+      console.error("=== Tool Result ===");
+      console.error(JSON.stringify(result, null, 2));
       return {
         content: [
           {
