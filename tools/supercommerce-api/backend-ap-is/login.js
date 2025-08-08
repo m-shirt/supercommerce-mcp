@@ -8,7 +8,6 @@
  */
 const executeFunction = async ({ email, password }) => {
   const baseURL = 'https://storeapi.el-dokan.com'; // will be provided by the user
-  const token = process.env.SUPERCOMMERCE_API_API_KEY;
   try {
     // Construct the URL for the login endpoint
     const url = `${baseURL}/api/admin/auth`;

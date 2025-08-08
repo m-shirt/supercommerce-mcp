@@ -205,3 +205,30 @@ Extend your MCP server with more tools easily:
 Visit the [Postman MCP Generator](https://postman.com/explore/mcp-generator) page for updates and new capabilities.
 
 Join the `#mcp-lab` channel in the [Postman Discord](https://discord.gg/PQAWcPkprM) to share what you've built and get help.
+
+
+## Test validate 
+node validateTools.js
+
+## run local 
+node localServer.js
+POST http://localhost:3001/api/mcp
+{
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/list",
+    "params": {}
+  }
+
+  {
+    "jsonrpc": "2.0",
+    "id": "1",
+    "method": "tools/call",
+    "params": {
+      "name": "login",
+      "arguments": {
+        "email": "example@supercommerce.ai",
+        "password": "Pa$$W@rd"
+      }
+    }
+  }

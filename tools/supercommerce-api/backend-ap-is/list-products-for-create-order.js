@@ -8,7 +8,7 @@
  * @returns {Promise<Array>} - The list of products for creating an order.
  */
 const executeFunction = async ({ keyword, user_id, address_id }) => {
-  const baseURL = ''; // will be provided by the user
+  const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
   try {
     // Construct the URL with query parameters

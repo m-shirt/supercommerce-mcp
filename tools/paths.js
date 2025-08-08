@@ -4,7 +4,7 @@ export const toolPaths = [
   'supercommerce-api/backend-ap-is/list-cities.js',
   'supercommerce-api/backend-ap-is/list-cancellation-reasons.js',
   'supercommerce-api/backend-ap-is/view-order.js',
-  'supercommerce-api/backend-ap-is/login.js',
+  //'supercommerce-api/backend-ap-is/login.js',
   'supercommerce-api/backend-ap-is/activate-promo-code.js',
   'supercommerce-api/backend-ap-is/deactivate-customer.js',
   'supercommerce-api/backend-ap-is/view-customer.js',
