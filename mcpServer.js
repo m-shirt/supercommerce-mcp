@@ -38,8 +38,8 @@ async function transformTools(tools) {
     .filter(Boolean);
 }
 
-async function setupServerHandlers(server, tools) {
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+export async function setupServerHandlers(server, tools) {
+    server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: await transformTools(tools),
   }));
 
