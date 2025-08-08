@@ -46,13 +46,13 @@ const WORK_WITH_PROMOTION = {
  * @param {string} args.customer_phones - Customer phones.
  * @param {string} args.target_type - Target type.
  * @param {number} args.work_with_promotion - Indicates if the promo works with promotions.
- * @param {number} args.first_order - Indicates if this is for first orders (0 or 1).
- * @param {number} args.free_delivery - Indicates if the promo includes free delivery (0 or 1).
- * @param {number} args.show_in_product - Show in product flag (0 or 1).
- * @param {number} args.check_all_conditions - Check all conditions flag (0 or 1).
+ * @param {number} args.first_order - Indicates if this is for first orders.
+ * @param {number} args.free_delivery - Indicates if the promo includes free delivery.
+ * @param {number} args.show_in_product - Show in product flag.
+ * @param {number} args.check_all_conditions - Check all conditions flag.
  * @param {Array} args.conditions - Conditions array.
  * @param {string} args.vendor_id - Vendor ID.
- * @param {number} args.mobile_only - Mobile only flag (0 or 1).
+ * @param {number} args.mobile_only - Mobile only flag.
  * @param {string} args.payment_methods - Payment methods.
  * @param {null|Array} args.customer_ids - Customer IDs.
  * @returns {Promise<Object>} - The result of the promo code creation.
@@ -82,38 +82,35 @@ const executeFunction = async ({
   payment_methods,
   customer_ids
 }) => {
-  const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
+  const baseURL = ''; // Provide base URL here or via environment
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
 
   const url = `${baseURL}/api/admin/promos`;
 
-  // Normalize flags to 0 or 1 integers
-  const normalizeFlag = (flag) => (flag === 1 ? 1 : 0);
-
   const bodyObj = {
-    name: String(name),
-    description: String(description),
-    type: Number(type),
-    amount: Number(amount),
-    max_amount: String(max_amount),
-    expiration_date: String(expiration_date),
-    start_date: String(start_date),
-    random_count: String(random_count),
-    minimum_amount: String(minimum_amount),
-    uses_per_user: uses_per_user === null ? null : Number(uses_per_user),
-    usage_limit: String(usage_limit),
-    customer_phones: String(customer_phones),
-    target_type: String(target_type),
-    work_with_promotion: Number(work_with_promotion),
-    first_order: normalizeFlag(first_order),
-    free_delivery: normalizeFlag(free_delivery),
-    show_in_product: normalizeFlag(show_in_product),
-    check_all_conditions: normalizeFlag(check_all_conditions),
-    conditions: Array.isArray(conditions) ? conditions : [],
-    vendor_id: String(vendor_id),
-    mobile_only: normalizeFlag(mobile_only),
-    payment_methods: String(payment_methods),
-    customer_ids: customer_ids === null ? null : Array.isArray(customer_ids) ? customer_ids : []
+    name,
+    description,
+    type,
+    amount,
+    max_amount,
+    expiration_date,
+    start_date,
+    random_count,
+    minimum_amount,
+    uses_per_user,
+    usage_limit,
+    customer_phones,
+    target_type,
+    work_with_promotion,
+    first_order,
+    free_delivery,
+    show_in_product,
+    check_all_conditions,
+    conditions,
+    vendor_id,
+    mobile_only,
+    payment_methods,
+    customer_ids
   };
 
   const body = JSON.stringify(bodyObj);
@@ -152,24 +149,7 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'create_promo_code',
-      description: `Create a new promo code.
-
-Types:
-1 => Amount
-2 => Percent
-3 => Free Delivery
-4 => Exclusive
-
-WORK_WITH_PROMOTION:
-1 => yes (work with)
-2 => cant (doesn't work, raise error)
-3 => removePromotion (remove promotion, override discount)
-4 => originalPrice (remove promotion, override discount)
-
-Flags are 0 or 1 for:
-first_order, free_delivery, show_in_product, check_all_conditions
-
-Must send all keys as in the request body.`,
+      description: 'Create a new promo code',
       parameters: {
         type: 'object',
         properties: {
@@ -186,13 +166,7 @@ Must send all keys as in the request body.`,
           start_date: { type: 'string', description: 'Start date of the promo code.' },
           random_count: { type: 'string', description: 'Random count.' },
           minimum_amount: { type: 'string', description: 'Minimum amount.' },
-          uses_per_user: {
-            anyOf: [
-              { type: 'null' },
-              { type: 'integer' }
-            ],
-            description: 'Uses per user.'
-          },
+          uses_per_user: { type: ['null', 'integer'], description: 'Uses per user.' },
           usage_limit: { type: 'string', description: 'Usage limit.' },
           customer_phones: { type: 'string', description: 'Customer phones.' },
           target_type: { type: 'string', description: 'Target type.' },
@@ -209,16 +183,7 @@ Must send all keys as in the request body.`,
           vendor_id: { type: 'string', description: 'Vendor ID.' },
           mobile_only: { type: 'integer', enum: [0, 1], description: 'Mobile only flag.' },
           payment_methods: { type: 'string', description: 'Payment methods.' },
-          customer_ids: {
-            anyOf: [
-              { type: 'null' },
-              {
-                type: 'array',
-                items: { type: 'string' }
-              }
-            ],
-            description: 'Customer IDs.'
-          }
+          customer_ids: { type: ['null', 'array'], description: 'Customer IDs.' }
         },
         required: [
           'name',
