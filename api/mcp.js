@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   const tools = await discoverTools();
-    console.log(JSON.stringify(tools, null, 2));
+   // console.log(JSON.stringify(tools, null, 2));
 
   const server = new Server({ name: "supercommerce", version: "0.1.0" }, { capabilities: { tools: {} } });
   await setupServerHandlers(server, tools);

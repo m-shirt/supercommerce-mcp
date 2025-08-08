@@ -1,9 +1,38 @@
+/**
+ * Promo Code Types
+ * 
+ * 'Amount' => 1,
+ * 'Percent' => 2,
+ * 'Free Delivery' => 3,
+ * 'Exclusive' => 4,
+ */
+const PROMO_TYPES = {
+  Amount: 1,
+  Percent: 2,
+  FreeDelivery: 3,
+  Exclusive: 4
+};
 
 /**
- * Function to edit a promo code.
+ * Work With Promotion options
+ * 
+ * 'yes' => 1,            // work with
+ * 'cant' => 2,           // doesn't work, raise error
+ * 'removePromotion' => 3,// remove promotion, override discount
+ * 'originalPrice' => 4   // remove promotion, override discount
+ */
+const WORK_WITH_PROMOTION = {
+  yes: 1,
+  cant: 2,
+  removePromotion: 3,
+  originalPrice: 4
+};
+
+/**
+ * Function to edit an existing promo code.
  *
- * @param {Object} args - The details of the promo code to update.
- * @param {string} args.id - The ID of the promo code to update.
+ * @param {Object} args - The details of the promo code to edit.
+ * @param {string} args.id - The ID of the promo code to edit.
  * @param {string} args.name - The name of the promo code.
  * @param {string} args.description - A description of the promo code.
  * @param {number} args.type - The type of promo code (1 for Amount, 2 for Percent, etc.).
@@ -29,7 +58,7 @@
  * @param {Array|null} args.customer_ids - Customer IDs.
  * @returns {Promise<Object>} - The result of the promo code update.
  */
-const editPromoCode = async ({
+const executeFunction = async ({
   id,
   name,
   description,
@@ -55,49 +84,51 @@ const editPromoCode = async ({
   payment_methods,
   customer_ids
 }) => {
-  const baseURL = ''; // Provide base URL here or via environment variable
+  const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
-
-  if (!id) throw new Error('Promo code ID is required');
-
-  const url = `${baseURL}/api/admin/promos/${id}`;
-
-  const bodyObj = {
-    name,
-    description,
-    type,
-    amount,
-    max_amount,
-    expiration_date,
-    start_date,
-    random_count,
-    minimum_amount,
-    uses_per_user,
-    usage_limit,
-    customer_phones,
-    target_type,
-    work_with_promotion,
-    first_order,
-    free_delivery,
-    show_in_product,
-    check_all_conditions,
-    conditions,
-    vendor_id,
-    mobile_only,
-    payment_methods,
-    customer_ids
-  };
-
-  const body = JSON.stringify(bodyObj);
-
   try {
+    // Construct the URL with promo ID
+    const url = `${baseURL}/api/admin/promos/${id}`;
+
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    };
+
+    const bodyObj = {
+      name,
+      description,
+      type,
+      amount,
+      max_amount,
+      expiration_date,
+      start_date,
+      random_count,
+      minimum_amount,
+      uses_per_user,
+      usage_limit,
+      customer_phones,
+      target_type,
+      work_with_promotion,
+      first_order,
+      free_delivery,
+      show_in_product,
+      check_all_conditions,
+      conditions,
+      vendor_id,
+      mobile_only,
+      payment_methods,
+      customer_ids
+    };
+
+    const body = JSON.stringify(bodyObj);
+    console.error('body:', body);
+
+    // PUT request to update promo
     const response = await fetch(url, {
-      method: 'PATCH',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
+      method: 'PUT',
+      headers,
       body
     });
 
@@ -109,16 +140,16 @@ const editPromoCode = async ({
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error editing promo code:', error);
-    return { error: 'An error occurred while editing the promo code.' };
+    console.error('Error updating the promo code:', error);
+    return { error: 'An error occurred while updating the promo code.' };
   }
 };
 
 /**
  * Tool configuration for editing a promo code.
  */
-const editApiTool = {
-  function: editPromoCode,
+const apiTool = {
+  function: executeFunction,
   definition: {
     type: 'function',
     function: {
@@ -144,7 +175,7 @@ Must send all keys as in the request body.`,
       parameters: {
         type: 'object',
         properties: {
-          id: { type: 'string', description: 'The ID of the promo code to update.' },
+          id: { type: 'string', description: 'The ID of the promo code to edit.' },
           name: { type: 'string', description: 'The name of the promo code.' },
           description: { type: 'string', description: 'A description of the promo code.' },
           type: {
@@ -208,5 +239,4 @@ Must send all keys as in the request body.`,
   }
 };
 
-
-export { editApiTool, PROMO_TYPES, WORK_WITH_PROMOTION };
+export { apiTool, PROMO_TYPES, WORK_WITH_PROMOTION };

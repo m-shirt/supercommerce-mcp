@@ -82,10 +82,20 @@ const executeFunction = async ({
   payment_methods,
   customer_ids
 }) => {
-  const baseURL = ''; // Provide base URL here or via environment variable
+ const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
-
+  try {
+    // Construct the URL for the request
   const url = `${baseURL}/api/admin/promos`;
+
+    // Set up headers for the request
+    const headers = {
+      'Authorization': `Bearer ${token}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+
+    };
+
 
   const bodyObj = {
     name,
@@ -114,27 +124,26 @@ const executeFunction = async ({
   };
 
   const body = JSON.stringify(bodyObj);
+    console.error('body:', body);
 
-  try {
+    // Perform the fetch request
     const response = await fetch(url, {
       method: 'POST',
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: 'application/json',
-        'Content-Type': 'application/json'
-      },
+      headers,
       body
     });
 
+    // Check if the response was successful
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(JSON.stringify(errorData));
+      throw new Error(errorData);
     }
 
+    // Parse and return the response data
     const data = await response.json();
     return data;
   } catch (error) {
-    console.error('Error creating promo code:', error);
+    console.error('Error creating the promo code:', error);
     return { error: 'An error occurred while creating the promo code.' };
   }
 };
