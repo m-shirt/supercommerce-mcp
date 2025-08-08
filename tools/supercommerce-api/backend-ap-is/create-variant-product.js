@@ -1,65 +1,68 @@
 /**
  * Function to create a variant product.
  *
- * @param {string} id - The ID of the main product to which the variant will be added.
- * @param {boolean} product_with_variant - Whether the product has variants.
- * @param {string} description - The HTML description of the product variant.
- * @param {string} description_ar - The Arabic HTML description of the product variant.
- * @param {string} image - URL of the main image for the variant.
- * @param {Array<Object>} images - Array of image objects with URL properties.
- * @param {number} order - The display order of the variant.
- * @param {string} long_description_ar - Long Arabic description (HTML).
- * @param {string} long_description_en - Long English description (HTML).
- * @param {string} name - Name of the variant product.
- * @param {string} name_ar - Arabic name of the variant.
- * @param {string} meta_title - Meta title for SEO.
- * @param {string} meta_description - Meta description for SEO.
- * @param {string} meta_title_ar - Arabic meta title for SEO.
- * @param {string} meta_description_ar - Arabic meta description for SEO.
- * @param {Array<Object>} options - Array of option objects with `option_id` and `option_value_id`.
- * @param {boolean} free_delivery - Whether free delivery is enabled.
- * @param {boolean} disable_free_delivery - Whether free delivery is disabled.
- * @param {string} sku - SKU for the variant product.
- * @param {string} barcode - Barcode for the variant product.
- * @param {Array<Object>} inventories - Array of inventory objects, including stock and prices.
- * @param {number} weight - Weight of the variant product.
- * @param {string} slug - URL slug for the variant product.
+ * @param {Object} params - Parameters object.
+ * @param {string} params.main_id - The ID of the main product to which the variant will be added.
+ * @param {boolean} params.product_with_variant - Make it true only if this api called after create main product.
+ * @param {string} params.description - The HTML description of the variant product.
+ * @param {string} params.description_ar - The Arabic HTML description of the variant product.
+ * @param {string} params.image - URL of the main image for the variant.
+ * @param {Array<Object>} params.images - Array of image objects with URL properties.
+ * @param {number} params.order - The display order of the variant.
+ * @param {string} params.long_description_ar - Long Arabic description (HTML).
+ * @param {string} params.long_description_en - Long English description (HTML).
+ * @param {string} params.name - Name of the variant product.
+ * @param {string} params.name_ar - Arabic name of the variant.
+ * @param {string} params.meta_title - Meta title for SEO.
+ * @param {string} params.meta_description - Meta description for SEO.
+ * @param {string} params.meta_title_ar - Arabic meta title for SEO.
+ * @param {string} params.meta_description_ar - Arabic meta description for SEO.
+ * @param {Array<Object>} params.options - Array of option objects with `option_id` and `option_value_id`.
+ * @param {boolean} params.free_delivery - Whether free delivery is enabled.
+ * @param {boolean} params.disable_free_delivery - Whether free delivery is disabled.
+ * @param {string} params.sku - SKU for the variant product.
+ * @param {string} params.barcode - Barcode for the variant product.
+ * @param {Array<Object>} params.inventories - Array of inventory objects, including stock and prices.
+ * @param {number} params.weight - Weight of the variant product.
+ * @param {string} [params.slug] - Optional URL slug for the variant product. Should only be sent if the user wants to update it.
  * @returns {Promise<Object>} - The result of the variant product creation.
  */
-const executeFunction = async (
-  id,
-  product_with_variant,
-  description,
-  description_ar,
-  image,
-  images,
-  order,
-  long_description_ar,
-  long_description_en,
-  name,
-  name_ar,
-  meta_title,
-  meta_description,
-  meta_title_ar,
-  meta_description_ar,
-  options,
-  free_delivery,
-  disable_free_delivery,
-  sku,
-  barcode,
-  inventories,
-  weight,
-  slug
-) => {
+const executeFunction = async (params) => {
+  const {
+    main_id,
+    product_with_variant,
+    description,
+    description_ar,
+    image,
+    images,
+    order,
+    long_description_ar,
+    long_description_en,
+    name,
+    name_ar,
+    meta_title,
+    meta_description,
+    meta_title_ar,
+    meta_description_ar,
+    options,
+    free_delivery,
+    disable_free_delivery,
+    sku,
+    barcode,
+    inventories,
+    weight,
+    slug,
+  } = params;
+
   const baseURL = process.env.SUPERCOMMERCE_BASE_URL;
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
 
   try {
-    const url = `${baseURL}/api/admin/products/${id}/variants`;
+    const url = `${baseURL}/api/admin/products/${main_id}/variants`;
 
     const headers = {
-      'Authorization': `Bearer ${token}`,
-      'Accept': 'application/json',
+      Authorization: `Bearer ${token}`,
+      Accept: 'application/json',
       'Content-Type': 'application/json',
     };
 
@@ -85,8 +88,11 @@ const executeFunction = async (
       barcode,
       inventories,
       weight,
-      slug,
     };
+
+    if (slug) {
+      variantData.slug = slug;
+    }
 
     const response = await fetch(url, {
       method: 'POST',
@@ -125,8 +131,8 @@ const apiTool = {
       parameters: {
         type: 'object',
         properties: {
-          id: { type: 'string', description: 'The ID of the main product.' },
-          product_with_variant: { type: 'boolean', description: 'Whether the product has variants.' },
+          main_id: { type: 'string', description: 'The ID of the main product.' },
+          product_with_variant: { type: 'boolean', description: 'Make true only if this API is called after creating main product.' },
           description: { type: 'string', description: 'HTML description of the variant.' },
           description_ar: { type: 'string', description: 'Arabic HTML description of the variant.' },
           image: { type: 'string', description: 'URL of the main variant image.' },
@@ -188,7 +194,23 @@ const apiTool = {
           weight: { type: 'number', description: 'Weight of the variant product.' },
           slug: { type: 'string', description: 'URL slug for the variant.' },
         },
-        required: ['id', 'product_with_variant', 'name', 'sku', 'options'],
+        required: [
+          'main_id',
+          'product_with_variant',
+          'description',
+          'description_ar',
+          'image',
+          'order',
+          'name',
+          'name_ar',
+          'options',
+          'free_delivery',
+          'disable_free_delivery',
+          'sku',
+          'barcode',
+          'inventories',
+          'weight'
+        ],
       },
     },
   },
