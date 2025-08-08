@@ -36,25 +36,25 @@ const WORK_WITH_PROMOTION = {
  * @param {string} args.description - A description of the promo code.
  * @param {number} args.type - The type of promo code (1 for Amount, 2 for Percent, etc.).
  * @param {number} args.amount - The amount for the promo code.
- * @param {string} args.max_amount - The maximum amount for the promo code.
+ * @param {string|null} args.max_amount - The maximum amount for the promo code.
  * @param {string} args.expiration_date - The expiration date of the promo code.
  * @param {string} args.start_date - The start date of the promo code.
- * @param {string} args.random_count - Random count.
- * @param {string} args.minimum_amount - Minimum amount.
- * @param {null|number} args.uses_per_user - Uses per user.
- * @param {string} args.usage_limit - Usage limit.
- * @param {string} args.customer_phones - Customer phones.
- * @param {string} args.target_type - Target type.
+ * @param {string|null} args.random_count - Random count.
+ * @param {string|null} args.minimum_amount - Minimum amount.
+ * @param {number|null} args.uses_per_user - Uses per user.
+ * @param {string|null} args.usage_limit - Usage limit.
+ * @param {string|null} args.customer_phones - Customer phones.
+ * @param {string|null} args.target_type - Target type.
  * @param {number} args.work_with_promotion - Indicates if the promo works with promotions.
  * @param {number} args.first_order - Indicates if this is for first orders.
  * @param {number} args.free_delivery - Indicates if the promo includes free delivery.
  * @param {number} args.show_in_product - Show in product flag.
  * @param {number} args.check_all_conditions - Check all conditions flag.
  * @param {Array} args.conditions - Conditions array.
- * @param {string} args.vendor_id - Vendor ID.
+ * @param {string|null} args.vendor_id - Vendor ID.
  * @param {number} args.mobile_only - Mobile only flag.
- * @param {string} args.payment_methods - Payment methods.
- * @param {null|Array} args.customer_ids - Customer IDs.
+ * @param {string|null} args.payment_methods - Payment methods.
+ * @param {Array|null} args.customer_ids - Customer IDs.
  * @returns {Promise<Object>} - The result of the promo code creation.
  */
 const executeFunction = async ({
@@ -82,7 +82,7 @@ const executeFunction = async ({
   payment_methods,
   customer_ids
 }) => {
-  const baseURL = ''; // Provide base URL here or via environment
+  const baseURL = ''; // Provide base URL here or via environment variable
   const token = process.env.SUPERCOMMERCE_API_API_KEY;
 
   const url = `${baseURL}/api/admin/promos`;
@@ -119,8 +119,8 @@ const executeFunction = async ({
     const response = await fetch(url, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${token}`,
-        'Accept': 'application/json',
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json',
         'Content-Type': 'application/json'
       },
       body
@@ -141,7 +141,9 @@ const executeFunction = async ({
 
 /**
  * Tool configuration for creating a promo code.
- * All fields are required.
+ * 
+ * Note: `nullable` is used in descriptions, but JSON Schema draft-07 does not support it natively.
+ * To allow nulls, the "type" is set as an array including "null".
  */
 const apiTool = {
   function: executeFunction,
@@ -160,16 +162,16 @@ const apiTool = {
             enum: Object.values(PROMO_TYPES),
             description: 'Promo code type (1-Amount, 2-Percent, 3-Free Delivery, 4-Exclusive).'
           },
-          amount: { type: 'integer', description: 'The amount for the promo code.' },
-          max_amount: { type: 'string', description: 'Maximum amount for the promo code.' },
+          amount: { type: 'number', description: 'The amount for the promo code.' },
+          max_amount: { type: ['string', 'null'], description: 'Maximum amount for the promo code.' },
           expiration_date: { type: 'string', description: 'Expiration date of the promo code.' },
           start_date: { type: 'string', description: 'Start date of the promo code.' },
-          random_count: { type: 'string', description: 'Random count.' },
-          minimum_amount: { type: 'string', description: 'Minimum amount.' },
-          uses_per_user: { type: ['null', 'integer'], description: 'Uses per user.' },
-          usage_limit: { type: 'string', description: 'Usage limit.' },
-          customer_phones: { type: 'string', description: 'Customer phones.' },
-          target_type: { type: 'string', description: 'Target type.' },
+          random_count: { type: ['string', 'null'], description: 'Random count.' },
+          minimum_amount: { type: ['string', 'null'], description: 'Minimum amount.' },
+          uses_per_user: { type: ['integer', 'null'], description: 'Uses per user.' },
+          usage_limit: { type: ['string', 'null'], description: 'Usage limit.' },
+          customer_phones: { type: ['string', 'null'], description: 'Customer phones.' },
+          target_type: { type: ['string', 'null'], description: 'Target type.' },
           work_with_promotion: {
             type: 'integer',
             enum: Object.values(WORK_WITH_PROMOTION),
@@ -179,11 +181,11 @@ const apiTool = {
           free_delivery: { type: 'integer', enum: [0, 1], description: 'Free delivery flag.' },
           show_in_product: { type: 'integer', enum: [0, 1], description: 'Show in product flag.' },
           check_all_conditions: { type: 'integer', enum: [0, 1], description: 'Check all conditions flag.' },
-          conditions: { type: 'array', description: 'Conditions array.' },
-          vendor_id: { type: 'string', description: 'Vendor ID.' },
+          conditions: { type: 'array', description: 'Conditions array.', items: { type: 'object' } },
+          vendor_id: { type: ['string', 'null'], description: 'Vendor ID.' },
           mobile_only: { type: 'integer', enum: [0, 1], description: 'Mobile only flag.' },
-          payment_methods: { type: 'string', description: 'Payment methods.' },
-          customer_ids: { type: ['null', 'array'], description: 'Customer IDs.' }
+          payment_methods: { type: ['string', 'null'], description: 'Payment methods.' },
+          customer_ids: { type: ['array', 'null'], description: 'Customer IDs.', items: { type: 'string' } }
         },
         required: [
           'name',
