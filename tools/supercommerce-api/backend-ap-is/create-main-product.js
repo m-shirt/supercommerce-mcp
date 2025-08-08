@@ -60,7 +60,8 @@ const apiTool = {
     type: 'function',
     function: {
       name: 'create_main_product',
-      description: 'Create a main product in the backend API.',
+      description: `1- When create a product must create main product first then create a variant (the sku for the main product is main_{{sku}}
+2- if the product has multible variants (ex differant colors) must add product_variant_options in the main like color and select color ex red to when create the variant to make user select beteen variants`,
       parameters: {
         type: 'object',
         properties: {
