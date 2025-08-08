@@ -21,4 +21,6 @@ export const toolPaths = [
   'supercommerce-api/backend-ap-is/create-customer.js',
   'supercommerce-api/backend-ap-is/edit-customer.js',
   'supercommerce-api/backend-ap-is/create-address.js',
+    'supercommerce-api/backend-ap-is/edit-order.js',
+  'supercommerce-api/backend-ap-is/create-order.js',
 ];
