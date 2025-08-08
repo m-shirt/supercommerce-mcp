@@ -96,7 +96,7 @@ const executeFunction = async (
     }
 
     const response = await fetch(url, {
-      method: 'POST', // or 'PUT' if your API requires PUT for update
+      method: 'PUT', 
       headers,
       body: JSON.stringify(variantData),
     });
