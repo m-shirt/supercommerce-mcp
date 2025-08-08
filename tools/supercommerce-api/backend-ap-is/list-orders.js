@@ -116,6 +116,7 @@ const apiTool = {
           },
           branch_ids: {
             type: 'array',
+            items: { type: 'string' },
             description: 'List of branch IDs for filtering orders.'
           },
           customer_name: {
