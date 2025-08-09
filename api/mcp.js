@@ -1,32 +1,75 @@
+// pages/api/mcp.js
+
 import { discoverTools } from "../lib/tools.js";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { setupServerHandlers } from "../mcpServer.js"; // if you export it
+import { setupServerHandlers } from "../mcpServer.js";
+
+export const config = {
+  api: {
+    bodyParser: false, // needed for SSE, we’ll parse JSON manually for POST
+  },
+};
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
+  if (req.method === "GET") {
+    // ----- SSE STREAMING MODE -----
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache, no-transform");
+    res.setHeader("Connection", "keep-alive");
 
-  const accept = (req.headers["accept"] || "").toLowerCase();
-  if (!accept.includes("application/json") || !accept.includes("text/event-stream")) {
-    return res.status(406).json({
-      jsonrpc: "2.0",
-      error: { code: -32000, message: "Not Acceptable: Client must accept both application/json and text/event-stream" },
-      id: null
+    const tools = await discoverTools();
+    const server = new Server(
+      { name: "supercommerce", version: "0.1.0" },
+      { capabilities: { tools: {} } }
+    );
+    await setupServerHandlers(server, tools);
+
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+
+    res.on("close", async () => {
+      await transport.close();
+      await server.close();
     });
+
+    await server.connect(transport);
+    await transport.handleRequest(req, res);
+    return;
   }
 
-  const tools = await discoverTools();
-   // console.log(JSON.stringify(tools, null, 2));
+  if (req.method === "POST") {
+    // ----- DIRECT JSON-RPC MODE -----
+    let body = "";
+    await new Promise((resolve) => {
+      req.on("data", (chunk) => { body += chunk; });
+      req.on("end", resolve);
+    });
 
-  const server = new Server({ name: "supercommerce", version: "0.1.0" }, { capabilities: { tools: {} } });
-  await setupServerHandlers(server, tools);
+    try {
+      req.body = JSON.parse(body);
+    } catch {
+      return res.status(400).json({ error: "Invalid JSON" });
+    }
 
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
-  res.on("close", async () => {
-    await transport.close();
-    await server.close();
-  });
+    const tools = await discoverTools();
+    const server = new Server(
+      { name: "supercommerce", version: "0.1.0" },
+      { capabilities: { tools: {} } }
+    );
+    await setupServerHandlers(server, tools);
 
-  await server.connect(transport);
-  await transport.handleRequest(req, res, req.body);
+    const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
+
+    res.on("close", async () => {
+      await transport.close();
+      await server.close();
+    });
+
+    await server.connect(transport);
+    await transport.handleRequest(req, res, req.body);
+    return;
+  }
+
+  res.setHeader("Allow", ["GET", "POST"]);
+  res.status(405).end("Method Not Allowed");
 }
