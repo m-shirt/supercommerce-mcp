@@ -33,39 +33,33 @@ export default async function handler(req, res) {
   res.write(`event: endpoint\n`);
   res.write(`data: https://supercommerce-mcp.vercel.app/api/mcp\n\n`);
 
-  // Send server info event (id: 0)
-  res.write(`event: message\n`);
-  res.write(
-    `data: ${JSON.stringify({
-      jsonrpc: "2.0",
-      id: 0,
-      result: {
-        protocolVersion: "2025-08-09",
-        capabilities: { experimental: {}, tools: { listChanged: false } },
-        serverInfo: { name: "SuperCommerce", version: "1.0.0" },
-      },
-    })}\n\n`
-  );
+//   // Send server info event (id: 0)
+//   res.write(`event: message\n`);
+//   res.write(
+//     `data: ${JSON.stringify({
+//       jsonrpc: "2.0",
+//       id: 0,
+//       result: {
+//         protocolVersion: "2025-08-09",
+//         capabilities: { experimental: {}, tools: { listChanged: false } },
+//         serverInfo: { name: "SuperCommerce", version: "1.0.0" },
+//       },
+//     })}\n\n`
+//   );
 
-  // Dynamically fetch tools list
-  const tools = await discoverTools();
-console.log("Discovered tools:", tools);
-  // Format tools for SSE payload
-//   const toolsPayload = tools.map((tool) => ({
-//     name: tool.name,
-//     description: tool.description || "",
-//     inputSchema: tool.inputSchema || { type: "object", properties: {} },
-//   }));
+//   // Dynamically fetch tools list
+//   const tools = await discoverTools();
+// console.log("Discovered tools:", tools);
 
-  // Send tools list event (id: 1)
-  res.write(`event: message\n`);
-  res.write(
-    `data: ${JSON.stringify({
-      jsonrpc: "2.0",
-      id: 1,
-      result: { tools: tools },
-    })}\n\n`
-  );
+//   // Send tools list event (id: 1)
+//   res.write(`event: message\n`);
+//   res.write(
+//     `data: ${JSON.stringify({
+//       jsonrpc: "2.0",
+//       id: 1,
+//       result: { tools: tools },
+//     })}\n\n`
+//   );
 
   // Heartbeat every 30 seconds to keep connection alive
   const heartbeat = setInterval(() => {
