@@ -2,7 +2,7 @@ import { getMCPInstance, closeMCPInstance } from "../../lib/mcpInstance.js";
 
 export const config = {
   api: {
-    bodyParser: false, // Required for streaming
+    bodyParser: false,
   },
 };
 
@@ -25,25 +25,28 @@ export default async function handler(req, res) {
     return;
   }
 
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache, no-transform");
-  res.setHeader("Connection", "keep-alive");
+  res.writeHead(200, {
+    "Content-Type": "text/event-stream",
+    "Cache-Control": "no-cache, no-transform",
+    "Connection": "keep-alive",
+  });
 
-  const { transport } = await getMCPInstance();
-
-  // Send initial connection message
+  // Send initial connected event
   res.write(`event: connected\n`);
   res.write(`data: ${JSON.stringify({ status: "ok", time: new Date().toISOString() })}\n\n`);
+  if (res.flush) res.flush();
 
-  // Heartbeat to keep SSE alive
   const heartbeat = setInterval(() => {
     res.write(`: ping - ${new Date().toISOString()}\n\n`);
+    if (res.flush) res.flush();
   }, 30000);
 
-  res.on("close", async () => {
+  req.on("close", async () => {
     clearInterval(heartbeat);
     await closeMCPInstance();
   });
 
-  await transport.handleRequest(req, res);
+  // Optionally comment out if it interferes with streaming
+  // const { transport } = await getMCPInstance();
+  // await transport.handleRequest(req, res);
 }
