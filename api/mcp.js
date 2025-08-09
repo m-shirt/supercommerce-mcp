@@ -6,14 +6,14 @@ import { setupServerHandlers } from "../mcpServer.js"; // if you export it
 export default async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
-  // const accept = (req.headers["accept"] || "").toLowerCase();
-  // if (!accept.includes("application/json") || !accept.includes("text/event-stream")) {
-  //   return res.status(406).json({
-  //     jsonrpc: "2.0",
-  //     error: { code: -32000, message: "Not Acceptable: Client must accept both application/json and text/event-stream" },
-  //     id: null
-  //   });
-  // }
+  const accept = (req.headers["accept"] || "").toLowerCase();
+  if (!accept.includes("application/json") || !accept.includes("text/event-stream")) {
+    return res.status(406).json({
+      jsonrpc: "2.0",
+      error: { code: -32000, message: "Not Acceptable: Client must accept both application/json and text/event-stream" },
+      id: null
+    });
+  }
 
   const tools = await discoverTools();
    // console.log(JSON.stringify(tools, null, 2));
