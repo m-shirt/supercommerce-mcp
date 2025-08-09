@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
   // Send endpoint event with the POST URL for JSON-RPC calls
   res.write(`event: endpoint\n`);
-  res.write(`data: https://supercommerce-mcp.vercel.app/api/mcp/sse\n\n`);
+  res.write(`data: https://supercommerce-mcp.vercel.app/api/mcp\n\n`);
 
 //   // Send server info event (id: 0)
 //   res.write(`event: message\n`);
