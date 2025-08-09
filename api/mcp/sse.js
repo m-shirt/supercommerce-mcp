@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     res.status(405).send("Method Not Allowed");
     return;
   }
-
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache, no-transform");
   res.setHeader("Connection", "keep-alive");
