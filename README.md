@@ -211,6 +211,9 @@ Join the `#mcp-lab` channel in the [Postman Discord](https://discord.gg/PQAWcPkp
 node validateTools.js
 
 ## run local 
+
+for STDIO node mcpServer.js  
+
 node localServer.js
 POST http://localhost:3001/api/mcp
 {
@@ -232,3 +235,12 @@ POST http://localhost:3001/api/mcp
       }
     }
   }
+
+
+  npx @modelcontextprotocol/inspector node index.js
+
+
+  http://localhost:3001/api/mcp/sse
+  https://gradio-docs-mcp.hf.space/gradio_api/mcp/sse
+  https://aiaw.app/
+  https://github.com/punkpeye/awesome-mcp-clients?tab=readme-ov-file

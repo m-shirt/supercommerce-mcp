@@ -183,7 +183,7 @@ const apiTool = {
                       discount_price_amount_type: { type: 'string', description: '(fixed for Fixed Amount, percentage for Precentage of price' },
                       discount_price_percentage: { type: 'string' , description: 'ex 10 for 10% dscount of the price and use it only with type percentage wotherwise leave it null'},
                       discount_start_date: { type: 'string', description: 'date and time in this formate 2024-06-01 00:00' },
-                      discount_end_date: { type: 'string', format: 'date and time in this formate 2024-06-01 00:00' },
+                      discount_end_date: { type: 'string', description: 'date and time in this formate 2024-06-01 00:00' },
                     }
                   }
                 }

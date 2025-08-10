@@ -13,6 +13,6 @@ app.get("/api/mcp/sse", (req, res) => {
   sseHandler(req, res);
 });
 
-app.listen(3001, () => {
-  console.log("Local MCP API running at http://localhost:3001");
+app.listen(3002, () => {
+  console.log("Local MCP API running at http://localhost:3002");
 });

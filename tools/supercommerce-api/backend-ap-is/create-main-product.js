@@ -66,7 +66,7 @@ const apiTool = {
         type: 'object',
         properties: {
           brand_id: {
-            type: 'integer',
+            type: 'string',
             description: 'The ID of the brand.'
           },
           category_id: {
@@ -106,10 +106,10 @@ const apiTool = {
           },
           type: {
             type: 'string',
-            description: 'The type of the product.'
+            description: 'The type of the product. "1" for regular product, "2" for bundle ( 1 is default )'
           }
         },
-        required: ['brand_id', 'category_id', 'name', 'sku', 'type']
+        required: ['brand_id', 'category_id', 'name', 'sku', 'type', 'name_ar', 'available_soon', 'bundle_checkout'],
       }
     }
   }
